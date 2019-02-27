@@ -248,9 +248,16 @@ public class BluetoothConnectionService {
             while (true) {
                 // Read from the InputStream
                 try {
-                    bytes = mmInStream.read(buffer);
-                    String incomingMessage = new String(buffer, 0, bytes);
-                    Log.d(TAG, "InputStream: " + incomingMessage);
+
+                    bytes = mmInStream.read(buffer, 0, buffer.length);
+
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i<bytes; i++) {
+                        sb.append(String.format("%02X ", buffer[i]));
+                    }
+
+                    Log.d(TAG, "InputStream: " + sb.toString());
+
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;

@@ -37,6 +37,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    public static final String EXTRA_MESSAGE = "com.raquelrv.smartoutlet.MESSAGE";
+    public static final String BLUETOOTH_DEVICE = "com.raquelrv.smartoutlet.BLUETOOTH_DEVICE";
+    public static final String MY_UUID = "com.raquelrv.smartoutlet.MY_UUID";
+
     BluetoothDevice mBTDevice;
 
     public ArrayList<BluetoothDevice> mBTDevices;
@@ -207,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void startBTConnection(BluetoothDevice device, UUID uuid){
         Log.d(TAG,"startBTConnection: Init Bluetooth connection...");
-
         mBluetoothConnection.startClient(device,uuid);
     }
 
@@ -298,5 +301,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mBTDevice = mBTDevices.get(position);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
         }
+    }
+
+    public void NewActivity(View view) {
+        Intent intent = new Intent(this, Outlet.class);
+        String message = "Test";
+        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(BLUETOOTH_DEVICE,mBTDevice);
+        intent.putExtra(MY_UUID,MY_UUID_INSECURE);
+
+        startActivity(intent);
     }
 }
