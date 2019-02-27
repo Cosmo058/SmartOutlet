@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Smart Outlet</string>
+    <string name="app_name">Enerico</string>
+    <string name="title_activity_outlet">Outlet 1</string>
 </resources>
