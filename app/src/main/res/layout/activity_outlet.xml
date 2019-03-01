@@ -25,14 +25,14 @@
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:id="@+id/graph"
-        android:layout_marginTop="?attr/actionBarSize"/>
+        android:layout_marginTop="?attr/actionBarSize"
+        android:id="@+id/graph"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="500dp"
-        android:id="@+id/DataRecieved"
+        android:id="@+id/DataReceived"
         android:text="Text here"/>
 
     <android.support.design.widget.FloatingActionButton

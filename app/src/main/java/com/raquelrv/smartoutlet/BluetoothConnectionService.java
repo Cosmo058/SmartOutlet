@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class BluetoothConnectionService {
@@ -282,7 +283,8 @@ public class BluetoothConnectionService {
                     }
 
                     Log.d(TAG, "InputStream: " + sb.toString());
-                    sendDataToActivity(sb.toString());
+
+                    sendDataToActivity(Integer.toString( (int)buffer[0]&0xFF) ) ;
 
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );

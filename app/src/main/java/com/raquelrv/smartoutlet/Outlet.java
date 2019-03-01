@@ -24,6 +24,7 @@ import java.util.UUID;
 public class Outlet extends AppCompatActivity {
     private static final String TAG = "Outlet";
     private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static int time_index = 0;
 
     BluetoothConnectionService mBluetoothConnection;
     BluetoothDevice mBTDevice;
@@ -47,13 +48,33 @@ public class Outlet extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //------------------------------------------------------------------------------------------
-        final TextView textView = findViewById(R.id.DataRecieved);
+        GraphView graph = findViewById(R.id.graph);
+        final LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
+        final TextView textView = findViewById(R.id.DataReceived);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(60);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(130);
+
+        graph.getViewport().setScalable(true);
+
+        graph.getGridLabelRenderer().setPadding(55);
+
+        series.setDrawDataPoints(true);
+        series.setDataPointsRadius(5);
+
+        graph.addSeries(series);
+
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         String data = intent.getStringExtra(BluetoothConnectionService.EXTRA_DATA);
                         textView.setText("Data: " +data);
+                        series.appendData(new DataPoint(time_index++,Integer.parseInt(data)),true,60);
                     }
                 }, new IntentFilter(BluetoothConnectionService.ACTION_DATA_BROADCAST)
         );
@@ -67,17 +88,6 @@ public class Outlet extends AppCompatActivity {
         mBluetoothConnection.startClient(mBTDevice,MY_UUID_INSECURE);
 
         Log.d(TAG, message);
-
-
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
     }
 
     @Override
