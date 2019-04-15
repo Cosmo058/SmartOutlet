@@ -266,26 +266,44 @@ public class BluetoothConnectionService {
         }
 
         public void run(){
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-
-            int bytes; // bytes returned from read()
+            byte[] buffer = new byte[1024];
+            StringBuilder data_buffer = new StringBuilder();
+            int read_bytes;
+            boolean has_start_flag = false;
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 // Read from the InputStream
                 try {
+                    read_bytes = mmInStream.read(buffer, 0, buffer.length);
 
-                    bytes = mmInStream.read(buffer, 0, buffer.length);
+                    for (int i = 0; i<read_bytes; i++) {
+                        if( buffer[i]== '@' ){
+                            Log.d(TAG,"START_FLAG found");
+                            data_buffer = new StringBuilder();
+                            //data_buffer.append(String.format("%02X ", buffer[i]));
+                            data_buffer.append( (char)buffer[i] );
+                            has_start_flag = true;
+                        }
 
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i<bytes; i++) {
-                        sb.append(String.format("%02X ", buffer[i]));
+                        if( buffer[i]== '$' ){
+                            Log.d(TAG,"END_FLAG found");
+                            //data_buffer.append(String.format("%02X ", buffer[i]));
+                            data_buffer.append( (char)buffer[i] );
+
+                            if( has_start_flag){
+                                sendDataToActivity( data_buffer.toString() ) ;
+                                Log.d(TAG,data_buffer.toString());
+                            }
+                            data_buffer = new StringBuilder();
+                            has_start_flag = false;
+                        }
+
+                        if(buffer[i]!= '@' && buffer[i]!= '$'){
+                            //data_buffer.append(String.format("%02X ", buffer[i]));
+                            data_buffer.append( (char)buffer[i] );
+                        }
                     }
-
-                    Log.d(TAG, "InputStream: " + sb.toString());
-
-                    sendDataToActivity(Integer.toString( (int)buffer[0]&0xFF) ) ;
-
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;

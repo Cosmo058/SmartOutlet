@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class Outlet extends AppCompatActivity {
@@ -49,8 +51,17 @@ public class Outlet extends AppCompatActivity {
 
         //------------------------------------------------------------------------------------------
         GraphView graph = findViewById(R.id.graph);
-        final LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
-        final TextView textView = findViewById(R.id.DataReceived);
+
+        final LineGraphSeries<DataPoint> voltage = new LineGraphSeries<>();
+        final LineGraphSeries<DataPoint> temperature = new LineGraphSeries<>();
+        final LineGraphSeries<DataPoint> current = new LineGraphSeries<>();
+
+        final TextView textViewVolt = findViewById(R.id.DataReceived);
+        final TextView textViewTemp = findViewById(R.id.Temp);
+        final TextView textViewCurr = findViewById(R.id.Curr);
+
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("Time [1/10 s]");
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Volts[V] / Temperature[°C]");
 
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
@@ -63,18 +74,43 @@ public class Outlet extends AppCompatActivity {
 
         graph.getGridLabelRenderer().setPadding(55);
 
-        series.setDrawDataPoints(true);
-        series.setDataPointsRadius(5);
+        voltage.setDrawDataPoints(true);
+        voltage.setDataPointsRadius(5);
 
-        graph.addSeries(series);
+        temperature.setDrawDataPoints(true);
+        temperature.setDataPointsRadius(5);
+        temperature.setColor(Color.RED);
+
+        current.setDrawDataPoints(true);
+        current.setDataPointsRadius(5);
+        current.setColor(Color.YELLOW);
+
+        graph.addSeries(voltage);
+        graph.addSeries(temperature);
+        graph.addSeries(current);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        String data = intent.getStringExtra(BluetoothConnectionService.EXTRA_DATA);
-                        textView.setText("Data: " +data);
-                        series.appendData(new DataPoint(time_index++,Integer.parseInt(data)),true,60);
+                        String data_stream = intent.getStringExtra(BluetoothConnectionService.EXTRA_DATA);
+                        data_stream = data_stream.replace("@","");
+                        data_stream = data_stream.replace("$","");
+
+                        Log.d(TAG,"data_stream = "+data_stream);
+
+                        String data[] = data_stream.split("\\|" );
+
+                        Log.d(TAG,"data[] size = "+ data.length);
+
+                        textViewVolt.setText("Voltage: " +data[0]+"V");
+                        textViewTemp.setText("Temperature: "+ data[1] +"°C");
+                        textViewCurr.setText("Current: "+data[2]+"A");
+                        
+                        voltage.appendData(new DataPoint(time_index,Double.parseDouble(data[0])),true,60);
+                        temperature.appendData(new DataPoint(time_index,Double.parseDouble(data[1])),true,60);
+                        current.appendData(new DataPoint(time_index++,Double.parseDouble(data[2])),true,60);
+
                     }
                 }, new IntentFilter(BluetoothConnectionService.ACTION_DATA_BROADCAST)
         );
