@@ -8,11 +8,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -252,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void btnDiscover(View view){
+        mBTDevices.clear();
         Log.d(TAG, "btnDiscover: Looking for unpaired devices.");
         if(mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.cancelDiscovery();
@@ -288,6 +291,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int devices_count = parent.getAdapter().getCount();
+        for(int i = 0; i<devices_count; i++){
+            ViewGroup list_element = (ViewGroup)view.getParent();
+            list_element.getChildAt(i).setBackgroundColor(Color.WHITE);
+        }
+
+        view.setBackgroundColor(Color.argb(32,0,133,119));
+
         mBluetoothAdapter.cancelDiscovery();
 
         Log.d(TAG,"onItemClick: You clicked on a device");
@@ -296,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Log.d(TAG,"onItemClick: deviceName = " + deviceName);
         Log.d(TAG,"onItemClick: deviceAddress = "+ deviceAddress);
+
 
         //create the bond
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
