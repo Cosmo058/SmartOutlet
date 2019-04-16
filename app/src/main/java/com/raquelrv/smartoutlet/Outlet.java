@@ -83,7 +83,7 @@ public class Outlet extends AppCompatActivity {
 
         current.setDrawDataPoints(true);
         current.setDataPointsRadius(5);
-        current.setColor(Color.YELLOW);
+        current.setColor(Color.GREEN);
 
         graph.addSeries(voltage);
         graph.addSeries(temperature);
