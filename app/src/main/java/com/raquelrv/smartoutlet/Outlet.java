@@ -20,6 +20,8 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 import java.util.UUID;
 
@@ -59,6 +61,7 @@ public class Outlet extends AppCompatActivity {
         final TextView textViewVolt = findViewById(R.id.DataReceived);
         final TextView textViewTemp = findViewById(R.id.Temp);
         final TextView textViewCurr = findViewById(R.id.Curr);
+        final TextView textViewPoew = findViewById(R.id.Powe);
 
         graph.getGridLabelRenderer().setHorizontalAxisTitle("Time [1/10 s]");
         graph.getGridLabelRenderer().setVerticalAxisTitle("Volts[V] / Temperature[°C]");
@@ -106,6 +109,8 @@ public class Outlet extends AppCompatActivity {
                         textViewVolt.setText("Voltage: " +data[0]+"V");
                         textViewTemp.setText("Temperature: "+ data[1] +"°C");
                         textViewCurr.setText("Current: "+data[2]+"A");
+
+                        textViewPoew.setText("Power: "+ BigDecimal.valueOf(Double.parseDouble(data[0])* Double.parseDouble(data[2])).setScale(2, RoundingMode.HALF_UP).doubleValue() + "W");
                         
                         voltage.appendData(new DataPoint(time_index,Double.parseDouble(data[0])),true,60);
                         temperature.appendData(new DataPoint(time_index,Double.parseDouble(data[1])),true,60);

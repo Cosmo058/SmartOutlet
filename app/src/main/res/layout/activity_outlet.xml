@@ -55,6 +55,15 @@
         android:id="@+id/Curr"
         android:text="Current: "/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="590dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@android:color/holo_purple"
+        android:id="@+id/Powe"
+        android:text="Power: "/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
